@@ -4,6 +4,7 @@ let storeLocation = document.getElementById('store-profiles');
 let salesTable = document.getElementById('sales-info')
 let hours = ["6am", "7am", "8am", "9am", "10am", "11am", "12am:", "1pm:", "2pm:", "3pm:", "4pm:", "5pm:", "6pm:", "7pm:", "8pm:"];
 let stores = [];
+let tableFooter = document.createElement('tfoot');
 
 
 function getRandomInt(min, max) {
@@ -44,12 +45,8 @@ Store.prototype.render = function () {
     soldCityHour.textContent = this.cookieSaleHour[i]
     tableRow.appendChild(soldCityHour)
   }
-
-
-
-
-
 }
+
 
 
 new Store('Seattle', 23, 65, 6.3);
@@ -66,7 +63,70 @@ function renderAllStores() {
   }
 }
 
+function displayHeader() {
+  let row = document.createElement('tr');
+  tableElem.appendChild(row);
+
+  let space = document.createElement('th');
+  row.appendChild(space);
+
+  for (let i = 0; i < hours.length; i++) {
+    let hoursElem = document.createElement('th');
+    hoursElem.textContent = hours[i];
+    row.appendChild(hoursElem);
+  }
+}
+function footerRow() {
+  let row = document.createElement('tr');
+  tableFooter.appendChild(row);
+  
+  let tableHeadElem = document.createElement('th');
+  tableHeadElem.textContent = 'Total Cookies';
+  row.appendChild(tableHeadElem);
+
+  let grandTotal = 0;
+
+  for(let i = 0; i < hours.length; i++) {
+    let timeTotal = 0;
+    for(let j = 0; j < locations.length; j++){
+      let numb = locations[j].cookies[i]
+      timeTotal+=numb;
+    }
+    grandTotal += timeTotal;
+    let tableDataElem = document.createElement('td');
+    tableDataElem.textContent = timeTotal;
+    row.appendChild(tableDataElem);
+  }
+
+  let grandTotalElem = document.createElement('td');
+  grandTotalElem.textContent = grandTotal;
+  row.appendChild(grandTotalElem);
+}
+
+
+function handleSubmit(event) {
+  event.preventDefault();
+
+  let name = event.target.location.value;
+  let minCust = event.target.minCustomer.value;
+  let maxCust = event.target.maxCustomer.value;
+  let avgSale = event.target.avgSale.value;
+  
+  
+  let newStoreInput = new Store(name, minCust, maxCust, avgSale);
+  
+  newStoreInput.getTotalCookies();
+  newStoreInput.render();
+  
+  tableFooter.innerHTML = '';
+  footerRow();
+}
+
 renderAllStores();
+displayHeader();
+footerRow();
+myForm.addEventListener('submit', handleSubmit)
+
 
 
 
